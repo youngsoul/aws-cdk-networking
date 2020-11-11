@@ -66,16 +66,15 @@ class VPCStack(core.Stack):
         # self.bastion_sg.add_ingress_rule(ec2.Peer.any_ipv4(), # any machine is allowed to ssh
         #                                  ec2.Port.tcp(22),
         #                                 description='SSH Access')
-        self.bastion_sg.add_ingress_rule(ec2.Peer.ipv4('73.209.223.60/32'), # any machine is allowed to ssh
+        self.bastion_sg.add_ingress_rule(ec2.Peer.ipv4('73.209.223.60/32'), # only my machine
                                          ec2.Port.tcp(22),
                                         description='SSH Access')
 
-        # 73.209.223.60
         # add SSH inbound rule
         # self.bastion_sg.add_ingress_rule(ec2.Peer.any_ipv4(), # any machine is allowed to ssh
         #                                  ec2.Port.tcp(8000),
         #                                 description='HTTP Access')
-        self.bastion_sg.add_ingress_rule(ec2.Peer.ipv4('73.209.223.60/32'), # any machine is allowed to ssh
+        self.bastion_sg.add_ingress_rule(ec2.Peer.ipv4('73.209.223.60/32'), # only my machine
                                          ec2.Port.tcp(8000),
                                         description='HTTP Access')
 
