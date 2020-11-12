@@ -96,35 +96,65 @@ class VPCStack(core.Stack):
                                          security_group=self.bastion_sg
                                          )
 
-        self.private_ec2_sg = ec2.SecurityGroup(self, id=f'{env_name}-privateec2sg',
-                                      security_group_name=f'{prj_name}-cdk-private-sg',
-                                      vpc=self.vpc,
-                                      description=f'{env_name} SG for Bastion',
-                                      allow_all_outbound=True)
-        self.private_ec2_sg.add_ingress_rule(self.bastion_sg, # only the bastion box
-                                         ec2.Port.tcp(22),
-                                        description='SSH Access')
+        # PRIVATE
+        self.private_ec2_sg = ec2.SecurityGroup(self, id=f'{env_name}-private-ec2-sg',
+                                                 security_group_name=f'{prj_name}-cdk-private-sg',
+                                                 vpc=self.vpc,
+                                                 description=f'{env_name} SG for Private',
+                                                 allow_all_outbound=True)
+        self.private_ec2_sg.add_ingress_rule(self.bastion_sg,  # only the bastion box can ssh in
+                                              ec2.Port.tcp(22),
+                                              description='SSH Access')
 
         self.private_host = ec2.Instance(self, id=f'{env_name}-private-host',
-                                         instance_type=ec2.InstanceType(instance_type_identifier='t2.micro'),
-                                         machine_image=ec2.AmazonLinuxImage(
+                                          instance_type=ec2.InstanceType(instance_type_identifier='t2.micro'),
+                                          machine_image=ec2.AmazonLinuxImage(
                                              edition=ec2.AmazonLinuxEdition.STANDARD,
                                              generation=ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
                                              virtualization=ec2.AmazonLinuxVirt.HVM,
                                              storage=ec2.AmazonLinuxStorage.GENERAL_PURPOSE
                                             ),
-                                         vpc=self.vpc,
-                                         key_name='pryan-spr3',  # must create the key name manually first
-                                                                # this is the pem private/public key
-                                         vpc_subnets=ec2.SubnetSelection( # this will create the ec2 instance in one of the PUBLIC subnets of the VPC that we just defined above
+                                          vpc=self.vpc,
+                                          key_name='pryan-spr3',  # must create the key name manually first
+                                          # this is the pem private/public key
+                                          vpc_subnets=ec2.SubnetSelection( # this will create the ec2 instance in one of the PUBLIC subnets of the VPC that we just defined above
+                                             subnet_type=ec2.SubnetType.PRIVATE
+                                         ),
+                                          security_group=self.private_ec2_sg
+                                          )
+
+        # ISOLATED
+        self.isolated_ec2_sg = ec2.SecurityGroup(self, id=f'{env_name}-isolated-ec2-sg',
+                                                 security_group_name=f'{prj_name}-cdk-isolated-sg',
+                                                 vpc=self.vpc,
+                                                 description=f'{env_name} SG for Isolated',
+                                                 allow_all_outbound=True)
+        self.isolated_ec2_sg.add_ingress_rule(self.bastion_sg,  # only the bastion box can ssh in
+                                              ec2.Port.tcp(22),
+                                              description='SSH Access')
+
+        self.isolated_host = ec2.Instance(self, id=f'{env_name}-isolated-host',
+                                          instance_type=ec2.InstanceType(instance_type_identifier='t2.micro'),
+                                          machine_image=ec2.AmazonLinuxImage(
+                                             edition=ec2.AmazonLinuxEdition.STANDARD,
+                                             generation=ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
+                                             virtualization=ec2.AmazonLinuxVirt.HVM,
+                                             storage=ec2.AmazonLinuxStorage.GENERAL_PURPOSE
+                                            ),
+                                          vpc=self.vpc,
+                                          key_name='pryan-spr3',  # must create the key name manually first
+                                          # this is the pem private/public key
+                                          vpc_subnets=ec2.SubnetSelection( # this will create the ec2 instance in one of the PUBLIC subnets of the VPC that we just defined above
                                              subnet_type=ec2.SubnetType.ISOLATED
                                          ),
-                                         security_group=self.private_ec2_sg
-                                         )
+                                          security_group=self.isolated_ec2_sg
+                                          )
 
         cdk_utils.add_tags(self.vpc, app_config.email)
         cdk_utils.add_tags(self.bastion_host, app_config.email)
         cdk_utils.add_tags(self.bastion_sg, app_config.email)
+        cdk_utils.add_tags(self.isolated_host, app_config.email)
+        cdk_utils.add_tags(self.isolated_ec2_sg, app_config.email)
         cdk_utils.add_tags(self.private_host, app_config.email)
         cdk_utils.add_tags(self.private_ec2_sg, app_config.email)
 
