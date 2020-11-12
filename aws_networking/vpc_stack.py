@@ -13,6 +13,9 @@ class VPCStack(core.Stack):
         env_name = self.node.try_get_context('env')
         print(prj_name, env_name)
 
+        """
+        NOTE: An internet gateway is created by default in a VPC when you create a Public Subnet
+        """
         self.vpc = ec2.Vpc(self, id=f'{prj_name}-VPC',
                            cidr='10.40.0.0/16', # 65536 available addresses in vpc
                            max_azs=1, # max availability zones

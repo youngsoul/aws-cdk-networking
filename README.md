@@ -21,4 +21,4 @@ On the private EC2 instance, issue the following command:
 
 To see if you can get a list of S3 buckets.
 
-![Pic](./docs/2020-11-10_20-32-56.png)
+![Pic](./docs/2020-11-12_09-15-36.png)
