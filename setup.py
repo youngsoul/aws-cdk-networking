@@ -19,7 +19,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where="aws_networking"),
 
     install_requires=[
-        "aws-cdk.core==1.72.0",
+        "aws-cdk.core",
         "aws-cdk.aws-ec2",
 
     ],
