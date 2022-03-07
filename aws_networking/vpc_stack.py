@@ -90,7 +90,7 @@ class VPCStack(core.Stack):
                                              storage=ec2.AmazonLinuxStorage.GENERAL_PURPOSE
                                          ),
                                          vpc=self.vpc,
-                                         key_name='pryan-spr3',  # must create the key name manually first
+                                         key_name='pryan-aws',  # must create the key name manually first
                                          # this is the pem private/public key
                                          vpc_subnets=ec2.SubnetSelection(
                                              # this will create the ec2 instance in one of the PUBLIC subnets of the VPC that we just defined above
